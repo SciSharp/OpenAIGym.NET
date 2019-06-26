@@ -1,4 +1,5 @@
-﻿using Numpy;
+﻿using Gym.Helper;
+using Numpy;
 using Numpy.Models;
 using Python.Runtime;
 using System;
@@ -44,6 +45,7 @@ namespace Gym
         internal static PyObject ToPython(object obj)
         {
             if (obj == null) return Runtime.GetPyNone();
+
             switch (obj)
             {
                 // basic types
@@ -66,6 +68,11 @@ namespace Gym
                 case PyObject o: return o;
                 default: throw new NotImplementedException($"Type is not yet supported: { obj.GetType().Name}. Add it to 'ToPythonConversions'");
             }
+        }
+
+        internal static PyObject ToPython(Dictionary<string, object> obj)
+        {
+            return DictSolver.FromClr(obj);
         }
 
         protected static PyTuple ToTuple(Array input)

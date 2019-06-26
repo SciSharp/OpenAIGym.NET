@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Gym.Spaces
 {
-    public abstract class Space : Base
+    public class Space : Base
     {
         public Dtype Dtype => new Dtype(__self__.GetAttr("dtype"));
 
@@ -19,6 +19,11 @@ namespace Gym.Spaces
 
         }
 
+        internal Space(PyObject py)
+        {
+            __self__ = py;
+        }
+
         public Space(Shape shape = null, Dtype dtype = null)
         {
             Parameters["shape"] = shape;
@@ -27,9 +32,18 @@ namespace Gym.Spaces
             __self__ = Instance.gym.spaces.Space;
         }
 
-        public abstract NDarray Sample();
+        public virtual NDarray Sample()
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            return new NDarray(InvokeMethod("sample", parameters));
+        }
 
-        public abstract bool Contains(Array x);
+        public virtual bool Contains(Array x)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters["x"] = x;
+            return InvokeMethod("contains", parameters).As<bool>(); throw new NullReferenceException();
+        }
 
         public virtual string[] Seed(int? seed = null)
         {
